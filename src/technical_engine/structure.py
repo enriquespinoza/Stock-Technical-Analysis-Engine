@@ -73,11 +73,7 @@ def confirmed_swings(
     result: list[ConfirmedSwing] = []
     for i in range(config.left, len(bars) - config.right):
         pivot = bars[i]
-        neighbors = [
-            bars[j]
-            for j in range(i - config.left, i + config.right + 1)
-            if j != i
-        ]
+        neighbors = [bars[j] for j in range(i - config.left, i + config.right + 1) if j != i]
         high_margin = pivot.high * config.tolerance_bps / 10_000.0
         low_margin = pivot.low * config.tolerance_bps / 10_000.0
         high = all(pivot.high > other.high + high_margin for other in neighbors)

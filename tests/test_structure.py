@@ -61,9 +61,7 @@ def test_prefix_invariance_and_no_early_confirmation():
 
 def test_equal_highs_and_flat_bars_have_no_swings():
     assert confirmed_swings(dataset([12, 12, 12, 12, 12]), SwingConfig(1, 1)) == ()
-    assert confirmed_swings(
-        dataset([10, 12, 12, 10], [4, 4, 4, 4]), SwingConfig(1, 1)
-    ) == ()
+    assert confirmed_swings(dataset([10, 12, 12, 10], [4, 4, 4, 4]), SwingConfig(1, 1)) == ()
 
 
 def test_tolerance_changes_near_equal_high_classification():

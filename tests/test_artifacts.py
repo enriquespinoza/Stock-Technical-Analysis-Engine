@@ -129,7 +129,13 @@ def test_existing_damaged_run_is_not_overwritten(dataset, run_at, tmp_path, dama
         victim.unlink()
         target = tmp_path / "target"
         target.write_text("keep")
-        victim.symlink_to(target)
+
+        try:
+            victim.symlink_to(target)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                pytest.skip("Windows lacks permission to create symbolic links")
+            raise
     else:
         victim.unlink()
         victim.mkdir()

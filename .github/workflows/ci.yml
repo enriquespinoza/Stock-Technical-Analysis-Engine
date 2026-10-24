@@ -1,0 +1,46 @@
+name: TAE cross-platform validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Python 3.11 / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          version: "0.13.5"
+
+      - name: Set up pinned Python
+        run: uv python install
+
+      - name: Install locked dependencies
+        run: uv sync --locked --all-extras
+
+      - name: Run automated tests (including platform-specific symlink behavior)
+        run: uv run --locked pytest -rs -q
+
+      - name: Lint
+        run: uv run --locked ruff check .
+
+      - name: Formatting
+        run: uv run --locked ruff format --check .
+
+      - name: Build sdist and wheel
+        run: uv build

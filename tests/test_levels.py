@@ -97,7 +97,11 @@ def test_strict_tolerance_and_validation():
     resistance = [e for e in level_events(data, config) if e.kind == "RESISTANCE"]
     assert len(resistance) == 2
     assert len({e.level_id for e in resistance}) == 2
-    for kwargs in ({"merge_tolerance_bps": -1}, {"merge_tolerance_bps": float("nan")}, {"merge_tolerance_bps": True}):
+    for kwargs in (
+        {"merge_tolerance_bps": -1},
+        {"merge_tolerance_bps": float("nan")},
+        {"merge_tolerance_bps": True},
+    ):
         with pytest.raises(ValueError):
             LevelConfig(**kwargs)
     with pytest.raises(TypeError):

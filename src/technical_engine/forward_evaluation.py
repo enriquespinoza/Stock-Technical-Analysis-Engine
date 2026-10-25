@@ -26,17 +26,13 @@ class ForwardEvaluationConfig:
     setup: SetupConfig = SetupConfig()
 
     def __post_init__(self) -> None:
-        if not isinstance(self.cutoff_session, date) or isinstance(
-            self.cutoff_session, datetime
-        ):
+        if not isinstance(self.cutoff_session, date) or isinstance(self.cutoff_session, datetime):
             raise ValueError("cutoff_session must be a date")
         if (
             not isinstance(self.horizons, tuple)
             or not self.horizons
             or any(
-                not isinstance(horizon, int)
-                or isinstance(horizon, bool)
-                or horizon < 1
+                not isinstance(horizon, int) or isinstance(horizon, bool) or horizon < 1
                 for horizon in self.horizons
             )
             or len(set(self.horizons)) != len(self.horizons)
@@ -145,12 +141,12 @@ def evaluate_forward_returns(
             if partition == "DEVELOPMENT":
                 matured = matured and end_index <= cutoff_index
             end_bar = bars[end_index] if matured else None
-            simple_return = (
-                end_bar.close / bars[index].close - 1 if end_bar is not None else None
-            )
+            simple_return = end_bar.close / bars[index].close - 1 if end_bar is not None else None
             directional_return = (
-                simple_return if event.direction == "UP" else -simple_return
-            ) if simple_return is not None else None
+                (simple_return if event.direction == "UP" else -simple_return)
+                if simple_return is not None
+                else None
+            )
             labels.append(
                 ForwardReturnLabel(
                     event_index=event.event_index,
@@ -178,18 +174,21 @@ def evaluate_forward_returns(
         for kind in ("BREAKOUT", "RETEST", "FAILED_BREAKOUT"):
             for horizon in config.horizons:
                 chosen = [
-                    label for label in labels
+                    label
+                    for label in labels
                     if label.partition == partition
                     and label.event_kind == kind
                     and label.horizon_bars == horizon
                 ]
                 matured_labels = [label for label in chosen if label.status == "MATURED"]
                 simple = [
-                    label.simple_return for label in matured_labels
+                    label.simple_return
+                    for label in matured_labels
                     if label.simple_return is not None
                 ]
                 directional = [
-                    label.directional_return for label in matured_labels
+                    label.directional_return
+                    for label in matured_labels
                     if label.directional_return is not None
                 ]
                 summaries.append(
@@ -203,7 +202,8 @@ def evaluate_forward_returns(
                         mean_directional_return=_mean(directional),
                         directional_positive_fraction=(
                             sum(value > 0 for value in directional) / len(directional)
-                            if directional else None
+                            if directional
+                            else None
                         ),
                     )
                 )

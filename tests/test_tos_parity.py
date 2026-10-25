@@ -62,10 +62,16 @@ def capture_info(dataset):
 def rows_csv(rows):
     output = io.StringIO(newline="")
     writer = csv.writer(output, lineterminator="\n")
-    writer.writerow((
-        "kind", "pivot_index", "confirmation_index",
-        "pivot_session", "confirmation_session", "price",
-    ))
+    writer.writerow(
+        (
+            "kind",
+            "pivot_index",
+            "confirmation_index",
+            "pivot_session",
+            "confirmation_session",
+            "price",
+        )
+    )
     for row in rows:
         writer.writerow(row)
     return output.getvalue()
@@ -116,7 +122,9 @@ def test_missing_extra_and_wrong_prices_are_explicit(dataset):
     )
     assert not report.comparison_complete
     assert {difference.kind for difference in report.differences} == {
-        "MISSING", "EXTRA", "PRICE_MISMATCH",
+        "MISSING",
+        "EXTRA",
+        "PRICE_MISMATCH",
     }
 
 
@@ -149,9 +157,7 @@ def test_identity_and_configuration_mismatch_rejected(dataset):
                 dataset, SwingConfig(1, 1), rows, capture=updated, study_source=STUDY
             )
     with pytest.raises(ValueError, match="source identity"):
-        compare_swing_capture(
-            dataset, SwingConfig(1, 1), rows, capture=info, study_source=b"other"
-        )
+        compare_swing_capture(dataset, SwingConfig(1, 1), rows, capture=info, study_source=b"other")
 
 
 def test_tolerance_is_explicit_and_never_relative(dataset):
@@ -169,7 +175,10 @@ def test_tolerance_is_explicit_and_never_relative(dataset):
         assert report.comparison_complete is expected
     with pytest.raises(ValueError, match="tolerance"):
         compare_swing_capture(
-            dataset, SwingConfig(1, 1), rows_csv(rows),
-            capture=capture_info(dataset), study_source=STUDY,
+            dataset,
+            SwingConfig(1, 1),
+            rows_csv(rows),
+            capture=capture_info(dataset),
+            study_source=STUDY,
             price_absolute_tolerance=float("nan"),
         )

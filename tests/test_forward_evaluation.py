@@ -93,7 +93,8 @@ def test_embargo_excludes_early_holdout_starts():
     outcome = evaluate_forward_returns(data, conf)
     assert all(
         label.observation_index > cutoff + 3
-        for label in outcome.labels if label.partition == "HOLDOUT"
+        for label in outcome.labels
+        if label.partition == "HOLDOUT"
     )
 
 

@@ -40,7 +40,7 @@ jobs:
         run: uv run --locked ruff check .
 
       - name: Formatting
-        run: uv run --locked ruff format --check --diff .
+        run: uv run --locked ruff format --check .
 
       - name: Build sdist and wheel
         run: uv build

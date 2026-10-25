@@ -14,7 +14,8 @@ from technical_engine.structure import SwingConfig
 
 
 def fixture(highs, lows, closes=None):
-    closes = [(h + l) / 2 for h, l in zip(highs, lows, strict=True)] if closes is None else closes
+    if closes is None:
+        closes = [(high + low) / 2 for high, low in zip(highs, lows, strict=True)]
     bars = tuple(
         OHLCVBar(
             symbol="TEST",

@@ -56,8 +56,12 @@ def test_four_streams_content_hashes_and_manifest(dataset, config, run_at, tmp_p
     run = generate_structure_artifacts(dataset, tmp_path, run_at=run_at, config=config)
     files = {p.name: p.read_bytes() for p in run.directory.iterdir()}
     assert set(files) == {
-        "confirmed_swings.json", "level_events.json", "trend_events.json",
-        "setup_events.json", "input_snapshot.json", "manifest.json",
+        "confirmed_swings.json",
+        "level_events.json",
+        "trend_events.json",
+        "setup_events.json",
+        "input_snapshot.json",
+        "manifest.json",
     }
     manifest = json.loads(files["manifest.json"])
     body = {key: value for key, value in manifest.items() if key != "run_id"}
@@ -72,7 +76,9 @@ def test_four_streams_content_hashes_and_manifest(dataset, config, run_at, tmp_p
     assert manifest["record_counts"]["setup_events.json"] > 0
     setups = json.loads(files["setup_events.json"])
     assert [event["kind"] for event in setups if event["direction"] == "UP"] == [
-        "BREAKOUT", "RETEST", "FAILED_BREAKOUT"
+        "BREAKOUT",
+        "RETEST",
+        "FAILED_BREAKOUT",
     ]
     assert all(event["usable_at"] == "2025-01-01T00:00:00+00:00" for event in setups)
 

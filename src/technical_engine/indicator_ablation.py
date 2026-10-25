@@ -7,7 +7,7 @@ TAE-003 horizon-purged baseline. No inferred predictive edge or trading fills.
 from __future__ import annotations
 
 import math
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Literal
 
 from technical_engine.artifacts import canonical_json, sha256
@@ -118,11 +118,12 @@ def audit_indicator_ablations(dataset: OHLCVDataset, plan: AblationPlan) -> Abla
         raise TypeError("plan must be AblationPlan")
     evaluation = evaluate_forward_returns(dataset, plan.statistical.forward)
     features = compute_features(dataset, plan.indicator)
-    flags: dict[int, dict[Context, bool] | None] = {}
+    flags: dict[tuple[int, str], dict[Context, bool] | None] = {}
     for label in evaluation.labels:
         index = label.observation_index
-        if index not in flags:
-            flags[index] = _context_states(
+        key = (index, label.event_direction)
+        if key not in flags:
+            flags[key] = _context_states(
                 features[index], dataset.bars[index].close, label.event_direction
             )
 
@@ -135,7 +136,7 @@ def audit_indicator_ablations(dataset: OHLCVDataset, plan: AblationPlan) -> Abla
                 if label.partition == partition
                 and label.event_kind == hypothesis.event_kind
                 and label.horizon_bars == hypothesis.horizon_bars
-                and flags[label.observation_index] is not None
+                and flags[label.observation_index, label.event_direction] is not None
             ]
             baseline = [label for label in selected if label.status == "MATURED"]
             baseline_mean = _mean(baseline)
@@ -149,7 +150,7 @@ def audit_indicator_ablations(dataset: OHLCVDataset, plan: AblationPlan) -> Abla
                 chosen = [
                     label
                     for label in selected
-                    if all(flags[label.observation_index][key] for key in enabled)
+                    if all(flags[label.observation_index, label.event_direction][key] for key in enabled)
                 ]
                 matured = [label for label in chosen if label.status == "MATURED"]
                 observed_mean = _mean(matured)

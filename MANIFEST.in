@@ -2,5 +2,5 @@ include .python-version .gitignore uv.lock
 include data/.gitkeep reports/.gitkeep
 recursive-include config *.json
 recursive-include docs *.md
-recursive-include scripts *.py
+include scripts/build_tos_capture.py scripts/generate_fixture.py
 recursive-include tests *.py

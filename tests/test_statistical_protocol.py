@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError, replace
-from datetime import date
-
 import pytest
 
 from technical_engine.forward_evaluation import ForwardEvaluationConfig, evaluate_forward_returns

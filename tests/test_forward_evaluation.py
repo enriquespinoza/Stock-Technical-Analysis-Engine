@@ -45,7 +45,7 @@ def setup_config():
 def test_horizon_labels_are_exact_close_to_close_and_directional():
     data = fixture()
     conf = ForwardEvaluationConfig(
-        cutoff_session=data.bars[8].session,
+        cutoff_session=data.bars[4].session,
         horizons=(1, 2),
         setup=setup_config(),
     )

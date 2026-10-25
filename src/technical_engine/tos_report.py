@@ -11,9 +11,10 @@ import hashlib
 import io
 import math
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date, datetime
-from typing import Literal, Sequence
+from typing import Literal
 
 SwingKind = Literal["HIGH", "LOW"]
 _REPORT_HEADER = (

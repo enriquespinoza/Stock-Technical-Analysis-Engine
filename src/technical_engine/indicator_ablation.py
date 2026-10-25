@@ -150,7 +150,10 @@ def audit_indicator_ablations(dataset: OHLCVDataset, plan: AblationPlan) -> Abla
                 chosen = [
                     label
                     for label in selected
-                    if all(flags[label.observation_index, label.event_direction][key] for key in enabled)
+                    if all(
+                        flags[label.observation_index, label.event_direction][key]
+                        for key in enabled
+                    )
                 ]
                 matured = [label for label in chosen if label.status == "MATURED"]
                 observed_mean = _mean(matured)

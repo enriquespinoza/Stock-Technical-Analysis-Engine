@@ -87,9 +87,7 @@ def _classify(high: HighStructure | None, low: LowStructure | None) -> TrendStat
     return "SIDEWAYS"
 
 
-def trend_events(
-    dataset: OHLCVDataset, config: TrendConfig | None = None
-) -> tuple[TrendEvent, ...]:
+def trend_events(dataset: OHLCVDataset, config: TrendConfig | None = None) -> tuple[TrendEvent, ...]:
     """Build a deterministic, append-only trend ledger from confirmed swings.
 
     Two confirmed HIGH pivots and two confirmed LOW pivots are required before
@@ -113,16 +111,12 @@ def trend_events(
     for swing in confirmed_swings(dataset, config.swing):
         if swing.kind == "HIGH":
             if latest_high is not None:
-                comparison = _compare(
-                    swing.price, latest_high.price, config.comparison_tolerance_bps
-                )
+                comparison = _compare(swing.price, latest_high.price, config.comparison_tolerance_bps)
                 high_structure = {1: "HH", -1: "LH", 0: "EH"}[comparison]
             latest_high = swing
         else:
             if latest_low is not None:
-                comparison = _compare(
-                    swing.price, latest_low.price, config.comparison_tolerance_bps
-                )
+                comparison = _compare(swing.price, latest_low.price, config.comparison_tolerance_bps)
                 low_structure = {1: "HL", -1: "LL", 0: "EL"}[comparison]
             latest_low = swing
 
@@ -140,12 +134,8 @@ def trend_events(
                 low_structure=low_structure,
                 latest_high_price=latest_high.price if latest_high is not None else None,
                 latest_low_price=latest_low.price if latest_low is not None else None,
-                latest_high_pivot_index=(
-                    latest_high.pivot_index if latest_high is not None else None
-                ),
-                latest_low_pivot_index=(
-                    latest_low.pivot_index if latest_low is not None else None
-                ),
+                latest_high_pivot_index=latest_high.pivot_index if latest_high is not None else None,
+                latest_low_pivot_index=latest_low.pivot_index if latest_low is not None else None,
                 available_at=swing.available_at,
                 retrieved_at=swing.retrieved_at,
                 usable_at=swing.usable_at,

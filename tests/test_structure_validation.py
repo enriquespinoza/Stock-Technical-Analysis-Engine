@@ -107,7 +107,7 @@ def test_missing_or_extra_files_rejected(published):
 
 
 def test_wrong_directory_and_symlink_rejected(published, tmp_path):
-    with pytest.raises(ValueError, match="directory name"):
+    with pytest.raises(ValueError, match="missing or unexpected files"):
         validate_structure_run(published.directory.parent)
     alias = tmp_path.parent / "unsafe-alias"
     try:

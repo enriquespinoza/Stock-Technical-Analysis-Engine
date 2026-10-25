@@ -99,9 +99,7 @@ def test_nonempty_all_contexts_vs_leave_rsi_out(monkeypatch):
         close = data.bars[label.observation_index].close
         is_up = label.event_direction == "UP"
         features[label.observation_index] = {
-            "rsi_14": (60.0 if is_up else 40.0) if index == 0 else (
-                40.0 if is_up else 60.0
-            ),
+            "rsi_14": (60.0 if is_up else 40.0) if index == 0 else (40.0 if is_up else 60.0),
             "ema_9": close - 0.5 if is_up else close + 0.5,
             "ema_21": close - 1.0 if is_up else close + 1.0,
             "roc_10": 1.0 if is_up else -1.0,

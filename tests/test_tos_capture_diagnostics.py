@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
+from runpy import run_path
 
-from scripts.build_tos_capture import _difference_json
 from technical_engine.artifacts import canonical_json
 from technical_engine.tos_parity import ParityDifference, SwingObservation
 
@@ -24,7 +25,8 @@ def test_mismatch_diagnostic_serializes_dates_to_iso_json():
         expected=expected,
         observed=None,
     )
-    obj = _difference_json(item)
+    script = Path(__file__).resolve().parents[1] / "scripts" / "build_tos_capture.py"
+    obj = run_path(str(script))["_difference_json"](item)
     assert obj["key"] == ["HIGH", 2, 4]
     assert obj["expected"]["pivot_session"] == "2024-01-04"
     assert obj["expected"]["confirmation_session"] == "2024-01-08"

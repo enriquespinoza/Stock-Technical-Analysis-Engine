@@ -208,9 +208,7 @@ def setup_events(
         for level_id, level in latest.items():
             if level_id in active or level_id in just_failed:
                 continue
-            if not _broken(
-                level, bars[i - 1].close, bar.close, config.breakout_buffer_bps
-            ):
+            if not _broken(level, bars[i - 1].close, bar.close, config.breakout_buffer_bps):
                 continue
             direction: BreakoutDirection = "UP" if level.kind == "RESISTANCE" else "DOWN"
             new_id = f"B-{sum(event.kind == 'BREAKOUT' for event in events) + 1:06d}"

@@ -201,9 +201,7 @@ def validate_return_robustness(
         raise ValueError("benchmark must use a different symbol")
     if asset.bars[0].adjustment_policy != benchmark.bars[0].adjustment_policy:
         raise ValueError("benchmark and asset adjustment policies must match")
-    if tuple(bar.session for bar in asset.bars) != tuple(
-        bar.session for bar in benchmark.bars
-    ):
+    if tuple(bar.session for bar in asset.bars) != tuple(bar.session for bar in benchmark.bars):
         raise ValueError("benchmark sessions must exactly match asset sessions")
 
     reference = evaluate_forward_returns(asset, config.forward)
@@ -216,7 +214,8 @@ def validate_return_robustness(
     for kind in ("BREAKOUT", "RETEST", "FAILED_BREAKOUT"):
         for horizon in config.forward.horizons:
             selected = [
-                label for label in evaluation.labels
+                label
+                for label in evaluation.labels
                 if label.partition == "HOLDOUT"
                 and label.event_kind == kind
                 and label.horizon_bars == horizon
@@ -238,9 +237,7 @@ def validate_return_robustness(
                 assets.append(label.directional_return)
                 rows.append((label, label.directional_return - directional))
             clusters = _clusters(rows)
-            largest = (
-                max(len(group) for group in clusters) / len(rows) if rows else None
-            )
+            largest = max(len(group) for group in clusters) / len(rows) if rows else None
             status: FindingStatus = "EXPLORATORY_ASSUMPTIONS_UNVERIFIED"
             lower = upper = probability = None
             if len(clusters) < config.min_clusters:
@@ -248,9 +245,7 @@ def validate_return_robustness(
             elif largest is not None and largest > config.largest_cluster_limit:
                 status = "SUPPRESSED_CLUSTER_DOMINANCE"
             else:
-                seed_source = (
-                    f"{config.seed}|{config.analysis_label}|{kind}|{horizon}".encode()
-                )
+                seed_source = f"{config.seed}|{config.analysis_label}|{kind}|{horizon}".encode()
                 local_seed = int.from_bytes(hashlib.sha256(seed_source).digest()[:8], "big")
                 lower, upper, probability = _resampling(
                     clusters,

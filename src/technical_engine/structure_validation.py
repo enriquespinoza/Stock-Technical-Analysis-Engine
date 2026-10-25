@@ -78,9 +78,7 @@ def _config_from_manifest(value: Any) -> StructureArtifactConfig:
         "Unexpected swing configuration fields",
     )
     try:
-        config = StructureArtifactConfig(
-            **{**value, "swing": SwingConfig(**swing)}
-        )
+        config = StructureArtifactConfig(**{**value, "swing": SwingConfig(**swing)})
     except (TypeError, ValueError) as exc:
         raise ValueError("Invalid structure configuration") from exc
     _require(_jsonable(asdict(config)) == value, "Configuration representation mismatch")
@@ -89,7 +87,13 @@ def _config_from_manifest(value: Any) -> StructureArtifactConfig:
 
 def _ledgers(
     dataset: OHLCVDataset, config: StructureArtifactConfig
-) -> dict[str, tuple[ConfirmedSwing, ...] | tuple[LevelEvent, ...] | tuple[TrendEvent, ...] | tuple[SetupEvent, ...]]:
+) -> dict[
+    str,
+    tuple[ConfirmedSwing, ...]
+    | tuple[LevelEvent, ...]
+    | tuple[TrendEvent, ...]
+    | tuple[SetupEvent, ...],
+]:
     return {
         "confirmed_swings.json": confirmed_swings(dataset, config.swing),
         "level_events.json": level_events(dataset, config.level_config()),
@@ -123,13 +127,13 @@ def _knowledge_check(dataset: OHLCVDataset, streams: dict[str, tuple[Any, ...]])
                 "Event usable_at predates source knowledge",
             )
             _require(
-                event.usable_at >= event.available_at
-                and event.usable_at >= event.retrieved_at,
+                event.usable_at >= event.available_at and event.usable_at >= event.retrieved_at,
                 "Event knowledge timestamps are inconsistent",
             )
             if filename == "setup_events.json":
                 _require(
-                    event.level_confirmation_index < event.breakout_index
+                    event.level_confirmation_index
+                    < event.breakout_index
                     <= event.observation_index,
                     "Setup references an unconfirmed level or future breakout",
                 )
@@ -193,7 +197,8 @@ def validate_structure_run(directory: str | Path) -> StructureValidationReport:
     )
     for filename, details in outputs.items():
         _require(
-            details == {
+            details
+            == {
                 "sha256": sha256(parsed[filename][1]),
                 "bytes": len(parsed[filename][1]),
             },
@@ -245,10 +250,10 @@ def validate_structure_run(directory: str | Path) -> StructureValidationReport:
         prefix = replace(dataset, bars=dataset.bars[:size])
         observed = _ledgers(prefix, config)
         for filename in _STREAMS:
-            event_key = "observation_index" if filename == "setup_events.json" else "confirmation_index"
-            before = tuple(
-                event for event in full[filename] if getattr(event, event_key) < size
+            event_key = (
+                "observation_index" if filename == "setup_events.json" else "confirmation_index"
             )
+            before = tuple(event for event in full[filename] if getattr(event, event_key) < size)
             _require(
                 observed[filename] == before,
                 f"Lookahead or prefix-replay divergence: {filename} at size {size}",

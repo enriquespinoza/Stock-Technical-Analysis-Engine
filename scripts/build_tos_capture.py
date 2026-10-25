@@ -14,7 +14,12 @@ from pathlib import Path
 from technical_engine.artifacts import canonical_json, sha256
 from technical_engine.data import OHLCVDataset
 from technical_engine.structure import SwingConfig
-from technical_engine.tos_parity import ThinkScriptCapture, compare_swing_capture
+from technical_engine.tos_parity import (
+    ParityDifference,
+    SwingObservation,
+    ThinkScriptCapture,
+    compare_swing_capture,
+)
 from technical_engine.tos_report import merged_capture_csv, parse_swing_strategy_report
 
 
@@ -41,6 +46,26 @@ def _save_run(root: Path, run_id: str, files: dict[str, bytes]) -> Path:
     finally:
         if stage.exists():
             shutil.rmtree(stage)
+
+
+
+def _difference_json(item: ParityDifference) -> dict[str, object]:
+    """Return canonical-JSON-safe diagnostics including ISO session dates."""
+
+    def observation(value: SwingObservation | None) -> dict[str, object] | None:
+        if value is None:
+            return None
+        result = asdict(value)
+        result["pivot_session"] = value.pivot_session.isoformat()
+        result["confirmation_session"] = value.confirmation_session.isoformat()
+        return result
+
+    return {
+        "kind": item.kind,
+        "key": list(item.key),
+        "expected": observation(item.expected),
+        "observed": observation(item.observed),
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -131,7 +156,7 @@ def main(argv: list[str] | None = None) -> int:
             "captured_count": result.captured_count,
             "matched_count": result.matched_count,
             "comparison_complete": result.comparison_complete,
-            "differences": [asdict(item) for item in result.differences],
+            "differences": [_difference_json(item) for item in result.differences],
         },
         "platform_execution_verified": False,
         "captured_at_platform_attested": None,

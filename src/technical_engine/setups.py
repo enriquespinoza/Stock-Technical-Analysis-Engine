@@ -148,7 +148,18 @@ def setup_events(
 
         trend_state: TrendState = context.state if context is not None else "INDETERMINATE"
 
-        def record(kind: SetupKind, origin: SetupEvent, index: int) -> SetupEvent:
+        def record(
+            kind: SetupKind,
+            origin: SetupEvent,
+            index: int,
+            *,
+            i: int = i,
+            bar=bar,
+            available_at: datetime = available_at,
+            retrieved_at: datetime = retrieved_at,
+            context: TrendEvent | None = context,
+            trend_state: TrendState = trend_state,
+        ) -> SetupEvent:
             relevant_level = latest[origin.level_id]
             known_available = max(available_at, origin.available_at, relevant_level.available_at)
             known_retrieved = max(retrieved_at, origin.retrieved_at, relevant_level.retrieved_at)

@@ -119,9 +119,7 @@ def test_prefix_invariance_and_reproducible_frozen_events():
     assert data.to_dict() == before
     for n in range(1, len(data.bars) + 1):
         subset = replace(data, bars=data.bars[:n])
-        assert setup_events(subset, config()) == tuple(
-            e for e in full if e.observation_index < n
-        )
+        assert setup_events(subset, config()) == tuple(e for e in full if e.observation_index < n)
     with pytest.raises(FrozenInstanceError):
         full[0].kind = "RETEST"
 

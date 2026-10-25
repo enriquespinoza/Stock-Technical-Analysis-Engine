@@ -6,6 +6,7 @@ from dataclasses import FrozenInstanceError, replace
 import pytest
 
 from test_forward_evaluation import fixture, setup_config
+
 from technical_engine.forward_evaluation import ForwardEvaluationConfig, evaluate_forward_returns
 from technical_engine.statistical_protocol import (
     StatisticalHypothesis,

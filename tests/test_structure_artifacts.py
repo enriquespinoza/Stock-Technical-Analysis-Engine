@@ -169,13 +169,17 @@ def test_config_input_and_clock_changes_produce_distinct_identity(
     changed_clock = generate_structure_artifacts(
         dataset, tmp_path, run_at=run_at + timedelta(seconds=1), config=config
     )
-    changed_input = replace(dataset, bars=(*dataset.bars[:-1], replace(dataset.bars[-1], volume=21)))
+    changed_input = replace(
+        dataset, bars=(*dataset.bars[:-1], replace(dataset.bars[-1], volume=21))
+    )
     changed_data = generate_structure_artifacts(
         changed_input, tmp_path, run_at=run_at, config=config
     )
     assert len({r.run_id for r in (baseline, changed_config, changed_clock, changed_data)}) == 4
     alternate = run_at.astimezone(timezone(timedelta(hours=-5)))
-    assert generate_structure_artifacts(dataset, tmp_path, run_at=alternate, config=config) == baseline
+    assert (
+        generate_structure_artifacts(dataset, tmp_path, run_at=alternate, config=config) == baseline
+    )
 
 
 def test_existing_tae_001_artifacts_remain_unchanged(dataset, config, run_at, tmp_path):

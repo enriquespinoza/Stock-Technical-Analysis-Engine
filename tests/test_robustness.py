@@ -25,7 +25,7 @@ def fixture(symbol="TEST", multiplier=1.0):
             session=date(2024, 1, 1) + timedelta(days=i),
             open=c * multiplier,
             high=h * multiplier,
-            low=l * multiplier,
+            low=low_value * multiplier,
             close=c * multiplier,
             volume=1000,
             provider="fixture",
@@ -34,7 +34,7 @@ def fixture(symbol="TEST", multiplier=1.0):
             adjustment_policy="unadjusted",
             snapshot_id=f"{symbol}-snapshot",
         )
-        for i, (h, l, c) in enumerate(zip(high, low, close, strict=True))
+        for i, (h, low_value, c) in enumerate(zip(high, low, close, strict=True))
     )
     return OHLCVDataset(bars, f"{symbol}-snapshot")
 

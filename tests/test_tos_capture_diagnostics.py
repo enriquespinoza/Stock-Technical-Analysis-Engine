@@ -19,7 +19,7 @@ def test_mismatch_diagnostic_serializes_dates_to_iso_json():
         price=15.555,
     )
     item = ParityDifference(
-        kind="missing",
+        kind="MISSING",
         key=("HIGH", 2, 4),
         expected=expected,
         observed=None,

@@ -132,9 +132,8 @@ def _dependencies(labels: list[ForwardReturnLabel]) -> tuple[int, int, int]:
         for j in range(i + 1, n):
             second = labels[j]
             shared = first.breakout_id == second.breakout_id
-            overlap = (
-                max(first.observation_index, second.observation_index)
-                < min(first.label_end_index, second.label_end_index)
+            overlap = max(first.observation_index, second.observation_index) < min(
+                first.label_end_index, second.label_end_index
             )
             if shared:
                 shared_pairs += 1
@@ -183,13 +182,9 @@ def audit_statistical_protocol(
                     horizon_bars=hypothesis.horizon_bars,
                     matured_count=len(matured),
                     censored_count=len(selected) - len(matured),
-                    mean_directional_return=(
-                        math.fsum(returns) / len(returns) if returns else None
-                    ),
+                    mean_directional_return=math.fsum(returns) / len(returns) if returns else None,
                     directional_positive_fraction=(
-                        sum(value > 0 for value in returns) / len(returns)
-                        if returns
-                        else None
+                        sum(value > 0 for value in returns) / len(returns) if returns else None
                     ),
                     unique_breakout_ids=len({label.breakout_id for label in matured}),
                     overlapping_outcome_pairs=overlap,

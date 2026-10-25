@@ -17,9 +17,7 @@ from datetime import date, datetime
 from typing import Literal
 
 SwingKind = Literal["HIGH", "LOW"]
-_REPORT_HEADER = (
-    "Id;Strategy;Side;Amount;Price;Date/Time;Trade P/L;P/L;Position;"
-)
+_REPORT_HEADER = "Id;Strategy;Side;Amount;Price;Date/Time;Trade P/L;P/L;Position;"
 _EVENT = re.compile(
     r"TAE_Swing_Event_Export\(TAE_EVT\|(HIGH|LOW)\|"
     r"(\d{8}|\d{2},\d{3},\d{3})\|"
@@ -28,7 +26,12 @@ _EVENT = re.compile(
 )
 _EXIT = "TAE_Swing_Event_Export(ExportExit)"
 _FIELDS = (
-    "kind", "pivot_index", "confirmation_index", "pivot_session", "confirmation_session", "price"
+    "kind",
+    "pivot_index",
+    "confirmation_index",
+    "pivot_session",
+    "confirmation_session",
+    "price",
 )
 
 
@@ -44,8 +47,12 @@ class ReportEvent:
 
     def csv_row(self) -> tuple[str, int, int, str, str, str]:
         return (
-            self.kind, self.pivot_index, self.confirmation_index,
-            self.pivot_session, self.confirmation_session, self.price_text,
+            self.kind,
+            self.pivot_index,
+            self.confirmation_index,
+            self.pivot_session,
+            self.confirmation_session,
+            self.price_text,
         )
 
 
@@ -160,7 +167,9 @@ def parse_swing_strategy_report(
         if ci - pi != right_bars:
             raise ValueError(f"Incorrect confirmation bar offset on line {line_idx + 1}")
         if ci + 1 >= len(sessions):
-            raise ValueError(f"Cannot verify next-bar trade date on last session (line {line_idx + 1})")
+            raise ValueError(
+                f"Cannot verify next-bar trade date on last session (line {line_idx + 1})"
+            )
         try:
             report_date = datetime.strptime(fields[5].strip(), "%m/%d/%y").date().isoformat()
         except ValueError as exc:

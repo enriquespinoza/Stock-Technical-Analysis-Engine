@@ -66,16 +66,25 @@ def main(argv: list[str] | None = None) -> int:
     study_raw = args.study.read_bytes()
     exporter_raw = args.exporter.read_bytes()
     high = parse_swing_strategy_report(
-        high_raw, symbol=symbol, expected_kind="HIGH", sessions=sessions,
-        pivot_prices=tuple(bar.high for bar in dataset.bars), right_bars=2,
+        high_raw,
+        symbol=symbol,
+        expected_kind="HIGH",
+        sessions=sessions,
+        pivot_prices=tuple(bar.high for bar in dataset.bars),
+        right_bars=2,
     )
     low = parse_swing_strategy_report(
-        low_raw, symbol=symbol, expected_kind="LOW", sessions=sessions,
-        pivot_prices=tuple(bar.low for bar in dataset.bars), right_bars=2,
+        low_raw,
+        symbol=symbol,
+        expected_kind="LOW",
+        sessions=sessions,
+        pivot_prices=tuple(bar.low for bar in dataset.bars),
+        right_bars=2,
     )
     capture_csv = merged_capture_csv(high, low)
     capture = ThinkScriptCapture(
-        symbol=symbol, aggregation="DAY",
+        symbol=symbol,
+        aggregation="DAY",
         snapshot_sha256=sha256(canonical_json(dataset.to_dict())),
         study_sha256=sha256(study_raw),
         # Processing time only. Not a platform-attested capture timestamp.
@@ -85,8 +94,11 @@ def main(argv: list[str] | None = None) -> int:
         last_session=dataset.bars[-1].session,
     )
     result = compare_swing_capture(
-        dataset, SwingConfig(left=2, right=2, tolerance_bps=0.0),
-        capture_csv, capture=capture, study_source=study_raw,
+        dataset,
+        SwingConfig(left=2, right=2, tolerance_bps=0.0),
+        capture_csv,
+        capture=capture,
+        study_source=study_raw,
     )
     input_hashes = {
         "snapshot_raw_sha256": sha256(snapshot_raw),

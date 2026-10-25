@@ -7,16 +7,31 @@ import pytest
 from technical_engine.tos_report import merged_capture_csv, parse_swing_strategy_report
 
 SESSIONS = (
-    "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-08",
-    "2024-01-09", "2024-01-10", "2024-01-11", "2024-01-12",
+    "2024-01-02",
+    "2024-01-03",
+    "2024-01-04",
+    "2024-01-05",
+    "2024-01-08",
+    "2024-01-09",
+    "2024-01-10",
+    "2024-01-11",
+    "2024-01-12",
 )
 HIGHS = (11, 12, 15.555, 13, 14, 13, 12, 10, 11)
 LOWS = (8, 9, 10, 8.2, 7.25, 8.5, 9, 8, 9)
 HEADER = "Id;Strategy;Side;Amount;Price;Date/Time;Trade P/L;P/L;Position;"
 
 
-def report(kind="HIGH", pivot="20,240,104", confirm="20,240,108", price="15.555",
-           trade_date="1/9/24", side="Buy to Open", symbol="TEST", name=None):
+def report(
+    kind="HIGH",
+    pivot="20,240,104",
+    confirm="20,240,108",
+    price="15.555",
+    trade_date="1/9/24",
+    side="Buy to Open",
+    symbol="TEST",
+    name=None,
+):
     if name is None:
         name = f"TAE_Swing_Event_Export(TAE_EVT|{kind}|{pivot}|{confirm}|{price})"
     return (
@@ -30,22 +45,31 @@ def parse(raw, kind="HIGH", sessions=SESSIONS, prices=None):
     if prices is None:
         prices = HIGHS if kind == "HIGH" else LOWS
     return parse_swing_strategy_report(
-        raw, symbol="TEST", expected_kind=kind,
-        sessions=sessions, pivot_prices=prices, right_bars=2,
+        raw,
+        symbol="TEST",
+        expected_kind=kind,
+        sessions=sessions,
+        pivot_prices=prices,
+        right_bars=2,
     )
 
 
 def test_valid_high_and_low_merge_exact_columns_and_subcent_price():
     high = parse(report())
-    low = parse(report(
-        kind="LOW", pivot="20,240,108", confirm="20,240,110",
-        price="7.25", trade_date="1/11/24", side="Buyto Open",
-    ), kind="LOW")
+    low = parse(
+        report(
+            kind="LOW",
+            pivot="20,240,108",
+            confirm="20,240,110",
+            price="7.25",
+            trade_date="1/11/24",
+            side="Buyto Open",
+        ),
+        kind="LOW",
+    )
     assert len(high.events) == len(low.events) == 1
     assert not high.warnings and not low.warnings
-    assert high.events[0].csv_row() == (
-        "HIGH", 2, 4, "2024-01-04", "2024-01-08", "15.555"
-    )
+    assert high.events[0].csv_row() == ("HIGH", 2, 4, "2024-01-04", "2024-01-08", "15.555")
     capture = merged_capture_csv(high, low)
     assert capture.splitlines() == [
         "kind,pivot_index,confirmation_index,pivot_session,confirmation_session,price",
@@ -108,9 +132,15 @@ def test_missing_report_observation_cannot_be_inferred():
     assert len(high.events) == 1
     capture = merged_capture_csv(
         high,
-        parse(report(
-            kind="LOW", pivot="20,240,108", confirm="20,240,110",
-            price="7.25", trade_date="1/11/24"
-        ), kind="LOW"),
+        parse(
+            report(
+                kind="LOW",
+                pivot="20,240,108",
+                confirm="20,240,110",
+                price="7.25",
+                trade_date="1/11/24",
+            ),
+            kind="LOW",
+        ),
     )
     assert "LOW," not in capture.splitlines()[1]

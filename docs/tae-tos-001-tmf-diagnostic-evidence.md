@@ -91,10 +91,43 @@ before any acceptance decision; the raw licensed data should remain local.
 | `parity/tmf_001/tos_swing_capture_auto.csv` | `64651c7fcd6d9a3ec2aa90e8b7a9192e19c113c89f35591cbe2db328e95d3655` |
 | `thinkscript/TAE_Confirmed_Swings_Parity.ts` | `ef187e67d5fbf2f12fb3eb74f55d22cb556f8f2b6f4ee2c6067cf2bd9818df49` |
 
-The actual full saved `TAE_Swing_Event_Export` source used by the operator
-is **not yet independently reconciled** or source-fingerprinted in this
-evidence package. The local, untracked conversion/comparison scripts likewise
-need versioned review before reproducibility signoff.
+The operator saved `thinkscript/TAE_Swing_Event_Export.ts` locally and reported
+SHA-256 `15a836a99812f5d828d6a867bba1c6413f0cd7b5abf159fa0b562bea582a89ae`.
+The posted source uses strict 2-left/2-right comparisons and an artificial
+simulated-order position reset; `exportHighs=yes` was used for the HIGH report
+and `exportHighs=no` for the LOW report. These settings and applied source bytes
+remain **operator-asserted**, not vendor-attested. The locally untracked helper
+scripts and exporter source still require independent review and deliberate
+versioning; they have not been silently committed.
+
+## Reproducible report-pipeline diagnostic (operator-reported)
+
+The operator ran `scripts/build_tos_capture.py` on the frozen TMF snapshot,
+both saved report files, and locally saved reference study/exporter sources.
+The pipeline created a separate immutable output directory:
+
+```text
+parity/tmf_001/validated_exports/run-52ecce11c0a9aae55a8bcc2680dda66dbf96fd59f05da7beb1037fa781e78f9a
+Python events: 68
+TOS events: 68
+Matched: 68
+Differences: 0
+Verification warnings: 0
+Comparison complete: True
+Research acceptance: NOT_ESTABLISHED
+```
+
+The run identifier is content-derived from source fingerprints and the
+diagnostic contract. Its actual `diagnostic_manifest.json` bytes and
+`tos_swing_capture.csv` bytes are held in the operator's excluded local
+`parity/tmf_001/` directory; their hashes should be verified before
+independent signoff. This recorded output is *not* an independent check of
+local source files or genuine historic point-in-time platform execution.
+
+At branch head `04258757b14cfc207a4c5fb6874eb14cb2c5a06e`, GitHub reported all
+five checks successful on draft PR #12 (including Windows, Linux, and CodeQL).
+Those checks validate committed software and synthetic fixtures, not
+the operator's excluded TMF evidence files.
 
 ## Open acceptance work
 

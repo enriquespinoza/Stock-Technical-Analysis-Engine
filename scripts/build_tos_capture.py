@@ -48,7 +48,6 @@ def _save_run(root: Path, run_id: str, files: dict[str, bytes]) -> Path:
             shutil.rmtree(stage)
 
 
-
 def _difference_json(item: ParityDifference) -> dict[str, object]:
     """Return canonical-JSON-safe diagnostics including ISO session dates."""
 

@@ -111,7 +111,9 @@ def verify_run(root: Path, run_dir: Path, study: Path, exporter: Path) -> dict[s
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Local-only read-only TMF evidence integrity audit")
+    parser = argparse.ArgumentParser(
+        description="Local-only read-only TMF evidence integrity audit"
+    )
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--study", type=Path)
